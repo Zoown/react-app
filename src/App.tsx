@@ -10,9 +10,6 @@
 //  9.
 // 10.
 
-// Shortcuts
-// CTRL+D will create multiple cursors that matches the string you have selected (Good for changing many identical strings)
-
 // JSX Rules
 //  1. Does not have for loops
 //  2. Can only contain HTML or react components (Cannot render dynamically like items.map(item => ))
@@ -28,61 +25,19 @@
 // Improvements that this code could benefit from
 // 1. Avoiding "Prop drilling" (Passing props down multiple layers of components, better way is either through "Redux" or "React context" which keeps a centralized storage place for all states)
 
-/*
-  //Default downloaded code template from vite
-  //import { useState } from 'react'
-  //import reactLogo from './assets/react.svg'
-  //import './App.css'
-  //
-  //function App() {
-  //  const [count, setCount] = useState(0)
-  //
-  //  return (
-  //    <div className="App">
-  //      <div>
-  //        <a href="https://vitejs.dev" target="_blank">
-  //          <img src="/vite.svg" className="logo" alt="Vite logo" />
-  //        </a>
-  //        <a href="https://reactjs.org" target="_blank">
-  //          <img src={reactLogo} className="logo react" alt="React logo" />
-  //        </a>
-  //      </div>
-  //      <h1>Vite + React</h1>
-  //      <div className="card">
-  //        <button onClick={() => setCount((count) => count + 1)}>
-  //          count is {count}
-  //        </button>
-  //        <p>
-  //          Edit <code>src/App.tsx</code> and save to test HMR
-  //        </p>
-  //      </div>
-  //      <p className="read-the-docs">
-  //        Click on the Vite and React logos to learn more
-  //      </p>
-  //    </div>
-  //  )
-  //}
-  //
-  //export default App
-*/
+// Shortcuts
+// CTRL+D will create multiple cursors that matches the string you have selected (Good for changing many identical strings)
 
 import ListGroup from "./components/ListGroup";
-import Header from "./Header1-bootstrap";
-import Footer from "./footer1";
-import SidePanel from "./side-panel1";
-import Content from "./content1";
+import Header from "./components/Header1-bootstrap";
+import Footer from "./components/footer1";
+import SidePanel from "./components/side-panel1";
+import Content from "./components/content1";
 import Card from "./Card";
 import { Routes, Route } from "react-router-dom";
-import logo from "./logo.png";
-import houseImage from "./test_house_5.jpg";
-import FilterBar from "./content-filter-bar2";
+import houseImage from "./assets/images/test_house_5.jpg";
+import FilterBar from "./components/content-filter-bar1";
 import React, { useState } from "react";
-//import Header from "./Header";
-//import Home from "./Home"; // Example component import About from './About'; // Example component import Contact from './Contact'; // Example component
-
-//Dashboard
-//import Dashboard from "./dashboard";
-
 function handleSelectCity(item: string) {
   console.log(item);
 }
@@ -91,7 +46,6 @@ type StreetFilter = "Street 1" | "Street 2" | "Street 3";
 type CityFilter = "City A" | "City B" | "City C";
 
 function App() {
-  //const handleSelectCity = (item: string) => { console.log(item) };
   const cardsData = [
     {
       image: houseImage,
@@ -195,13 +149,6 @@ function App() {
     }));
   };
 
-  //STREET FILTER ONLY (NOT ADDED CITY FILTER YET)
-  //const filteredCards = cardsData.filter(
-  //  (card) =>
-  //    filters[card.street as StreetFilter] ||
-  //    !Object.values(filters).some(Boolean)
-  //);
-
   const filteredCards = cardsData.filter(
     (card) =>
       (streetFilters[card.street as StreetFilter] ||
@@ -211,47 +158,6 @@ function App() {
   );
 
   return (
-    //<div>
-    //  <Header />
-    //  <Routes>
-    //    <Route path="*" element={<App />} />
-    //    <Route path="/about" element={<App />} />
-    //    <Route path="/contact" element={<App />} />
-    //  </Routes>
-    //</div>
-
-    //<div>
-    //  <ListGroup
-    //    items={["City A", "City B", "City C", "City D", "City E"]}
-    //    heading="Cities"
-    //    onSelectItem={handleSelectCity}
-    //  />
-    //</div>
-
-    //<div>
-    //  <Dashboard />
-    //</div>
-
-    //ROUTING - NO SIDEPANEL
-    //<div>
-    //  <Header />
-    //  <Routes>
-    //    <Route
-    //      path="*"
-    //      element={
-    //        <ListGroup
-    //          items={["City A", "City B", "City C", "City D", "City E"]}
-    //          heading="Cities"
-    //          onSelectItem={handleSelectCity}
-    //        />
-    //      }
-    //    />
-    //    <Route path="/about" element={<div>About Page</div>} />
-    //    <Route path="/apartments" element={<div>Apartments Page</div>} />
-    //  </Routes>
-    //  <Footer />
-    //</div>
-
     <div>
       <Header />
       <div className="d-flex">

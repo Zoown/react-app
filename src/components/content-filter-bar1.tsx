@@ -9,7 +9,7 @@
 // form-check-input = adds styling to the checkbox/radio button input.
 // form-check-label = adds styling to the checkbox/radio label.
 import React from "react";
-import "./myCustomStyles.css";
+import "../myCustomStyles.css";
 
 interface FilterBarProps {
   streetFilters: Record<"Street 1" | "Street 2" | "Street 3", boolean>;
