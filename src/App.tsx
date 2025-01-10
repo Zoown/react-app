@@ -34,7 +34,7 @@ import Footer from "./components/footer1";
 import SidePanel from "./components/side-panel1";
 import Content from "./components/content1";
 import Card from "./Card";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import houseImage from "./assets/images/test_house_5.jpg";
 import FilterBar from "./components/content-filter-bar1";
 import React, { useState } from "react";
