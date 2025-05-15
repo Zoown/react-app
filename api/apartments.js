@@ -7,11 +7,6 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-dotenv.config();
-const app = express();
-app.use(cors());
-app.use(express.json()); // Enables JSON parsing
-
 console.log("Server is running and listening for requests... 2");
 console.log("DB_USER:", process.env.DB_USER);
 console.log("DB_HOST:", process.env.DB_HOST);
