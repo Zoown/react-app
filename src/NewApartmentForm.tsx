@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 interface ApartmentFormData {
-  id: number;
   street: string;
   address: string;
   apartment_number: number;
@@ -17,7 +16,6 @@ interface NewApartmentFormProps {
 
 const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded }) => {
   const [formData, setFormData] = useState<ApartmentFormData>({
-    id: 0,
     street: "",
     address: "",
     apartment_number: 0,
@@ -26,8 +24,15 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
     city: "",
   });
 
+  //const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //  setFormData({ ...formData, [e.target.name]: e.target.value });
+  //};
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.type === "number" ? Number(e.target.value) : e.target.value, // Convert numbers
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,15 +40,25 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
     console.log("Submitting form data:", formData); // Debugging
 
     try {
-      const response = await axios.post("http://localhost:5000/apartments", formData, {
+      const response = await axios.post("/api/apartments", formData, {
         headers: { "Content-Type": "application/json" } // Explicitly set headers
       });
+      
+      //const response = await axios.post("/api/apartments", {
+      //  street: formData.street,
+      //  address: formData.address,
+      //  apartment_number: formData.apartment_number,
+      //  size_sq_m: formData.size_sq_m,
+      //  rent_cost: formData.rent_cost,
+      //  city: formData.city,
+      //}, {
+      //  headers: { "Content-Type": "application/json" } // Explicitly set headers
+      //});
 
       onApartmentAdded(response.data); // Update the frontend dynamically
 
       // Reset the form
       setFormData({
-        id: 0,
         street: "",
         address: "",
         apartment_number: 0,

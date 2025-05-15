@@ -59,7 +59,7 @@ type StreetFilter = "Street 1" | "Street 2" | "Street 3";
 type CityFilter = "City A" | "City B" | "City C" | "City D";
 
 interface Apartment {
-  id: number;
+  id?: number;
   street: string;
   address: string;
   apartment_number: number;
@@ -94,10 +94,21 @@ function App() {
 
   const [apartments, setApartments] = useState<Apartment[]>([]);
 
+  //useEffect(() => {
+  //  axios.get("http://localhost:5000/apartments")  // Backend API URL
+  //    .then(response => setApartments(response.data))  // Store data in state
+  //    .catch(error => console.error("Error fetching apartments:", error));
+  //}, []);
+
   useEffect(() => {
-    axios.get("http://localhost:5000/apartments")  // Backend API URL
-      .then(response => setApartments(response.data))  // Store data in state
-      .catch(error => console.error("Error fetching apartments:", error));
+    fetch("/api/apartments") // Make sure this matches your API route!
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched apartments:", data); // Debugging
+        setApartments(data);
+        setLoading(false);
+      })
+      .catch((err) => console.error("API fetch error:", err));
   }, []);
 
   const [streetFilters, setStreetFilters] = useState<
@@ -275,7 +286,7 @@ function App() {
                   {
                     apartments.map((apt) => (
                       <div key={apt.id} className="apartment-card">
-                        <DeleteApartment apartmentId={apt.id} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
+                        <DeleteApartment apartmentId={apt.id ?? 0} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
                       </div>
                     ))
                   }
@@ -296,3 +307,7 @@ function App() {
 }
 
 export default App;
+function setLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+

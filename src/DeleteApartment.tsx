@@ -10,7 +10,8 @@ interface DeleteApartmentProps {
 const DeleteApartment: React.FC<DeleteApartmentProps> = ({ apartmentId, apartmentNumber, onApartmentDeleted }) => {
   const handleApartmentDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/apartments/${apartmentId}`);
+      console.log("Attempting to DELETE apartment with ID:", apartmentId);
+      await axios.delete(`/api/apartments?id=${apartmentId}`);
       onApartmentDeleted(apartmentId); // Remove from UI after successful deletion
     } catch (error) {
       console.error("Error deleting apartment:", error);
