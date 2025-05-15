@@ -1,4 +1,25 @@
+console.log("Server is running and listening for requests...");
+import express from "express";
+import cors from "cors";
 import pg from "pg";
+import dotenv from "dotenv";
+
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+
+dotenv.config();
+const app = express();
+app.use(cors());
+app.use(express.json()); // Enables JSON parsing
+
+console.log("Server is running and listening for requests... 2");
+//console.log("DB_USER:", process.env.DB_USER);
+//console.log("DB_HOST:", process.env.DB_HOST);
+//console.log("DB_NAME:", process.env.DB_NAME);
+//console.log("DB_PASS:", process.env.DB_PASS);
+
+
+// PostgreSQL Database Connection
 const pool = new pg.Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
