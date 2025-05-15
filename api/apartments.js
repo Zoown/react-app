@@ -10,21 +10,40 @@ dotenv.config();
 // PostgreSQL Database Connection
 const pool = new pg.Pool({
   user: process.env.DB_USER,
-  host: process.env.DB_HOST,
+  //host: process.env.DB_HOST,
+  host: "2a05:d016:571:a401:435a:ae08:ec65:fb81",
   database: process.env.DB_NAME,
   password: process.env.DB_PASS,
   port: 5432,
-  ssl: { rejectUnauthorized: false } // Required for Supabase!
+  ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 5000, // Helps prevent hanging issues
+  statement_timeout: 5000 // Adds extra protection against timeouts
 });
 
 export default async function handler(req, res) {
-  const dns = await import("dns/promises");
+  console.log("API Request received for /apartments");
 
-  try {
-    const addresses = await dns.lookup("db.djnxumgjhrycxjxqtdju.supabase.co");
-    res.status(200).json({ message: "DNS resolution successful", addresses });
-  } catch (error) {
-    console.error("DNS resolution error:", error);
-    res.status(500).json({ error: error.message });
+  // Debugging: Log Environment Variables
+  console.log("DB_USER:", process.env.DB_USER);
+  console.log("DB_HOST:", process.env.DB_HOST);
+  console.log("DB_NAME:", process.env.DB_NAME);
+  console.log("DB_PASS:", process.env.DB_PASS ? "Exists" : "Not Set");
+
+  // Ensure Environment Variables Exist
+  if (!process.env.DB_HOST) {
+    console.error("DB_HOST is MISSING in Vercel!");
+    return res.status(500).json({ error: "DB_HOST is undefined in Vercel!" });
+  }
+
+  if (req.method === "GET") {
+    try {
+      const result = await pool.query("SELECT * FROM apartments");
+      res.status(200).json(result.rows);
+    } catch (err) {
+      console.error("Database Query Error:", err);
+      res.status(500).json({ error: err.message });
+    }
+  } else {
+    res.status(405).json({ error: "Method Not Allowed" });
   }
 }
