@@ -25,18 +25,30 @@ const pool = new pg.Pool({
 });
 
 export default async function handler(req, res) {
-  console.log("API Request received for /apartments"); // Debugging log
-  console.log("DB_HOST:", process.env.DB_HOST); // Check if env variables are loaded
+  console.log("API Request received for /apartments");
 
-  if (req.method === "GET") {
-    try {
-      const result = await pool.query("SELECT * FROM apartments");
-      res.json(result.rows);
-    } catch (err) {
-      console.error("Database query error:", err);
-      res.status(500).json({ error: err.message });
-    }
-  } else {
-    res.status(405).json({ error: "Method Not Allowed" });
+  if (!process.env.DB_HOST) {
+    console.error("DB_HOST is MISSING in Vercel!");
+    return res.status(500).json({ error: "DB_HOST is undefined in Vercel!" });
+  }
+
+  console.log("DB_HOST (from Vercel):", process.env.DB_HOST); // Debugging
+
+  try {
+    const pg = require("pg");
+    const pool = new pg.Pool({
+      user: process.env.DB_USER,
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      password: process.env.DB_PASS,
+      port: 5432,
+      ssl: { rejectUnauthorized: false }
+    });
+
+    const result = await pool.query("SELECT NOW()");
+    res.status(200).json({ message: "Database connection successful", time: result.rows[0] });
+  } catch (error) {
+    console.error("Database connection error:", error);
+    res.status(500).json({ error: error.message });
   }
 }
