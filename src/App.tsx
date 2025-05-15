@@ -28,6 +28,10 @@
 // Shortcuts
 // CTRL+D will create multiple cursors that matches the string you have selected (Good for changing many identical strings)
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";  // Enables navbar toggler functionality
+import "./styles.css";
+
 import ListGroup from "./components/ListGroup";
 import Header from "./components/Header1-bootstrap";
 import Footer from "./components/footer1";
@@ -37,89 +41,64 @@ import Card from "./Card";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import houseImage from "./assets/images/test_house_5.jpg";
 import FilterBar from "./components/content-filter-bar1";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import NewApartmentForm from "./NewApartmentForm";
+import DeleteApartment from "./DeleteApartment";
+
+//Auth
+import { Navigate } from "react-router-dom";
+import Login from "./login";
+
+
 function handleSelectCity(item: string) {
   console.log(item);
 }
 
 type StreetFilter = "Street 1" | "Street 2" | "Street 3";
-type CityFilter = "City A" | "City B" | "City C";
+type CityFilter = "City A" | "City B" | "City C" | "City D";
+
+interface Apartment {
+  id: number;
+  street: string;
+  address: string;
+  apartment_number: number;
+  size_sq_m: number;
+  rent_cost: number;
+  city: string;
+}
+
+// Token lasts forever does not check expiraton time
+//const isAuthenticated = () => {
+//  return !!localStorage.getItem("token"); // Checks if user is authenticated
+//};
+
+const isAuthenticated = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+
+  try {
+    const { exp } = JSON.parse(atob(token.split(".")[1])); // Decode the JWT payload
+    return exp * 1000 > Date.now(); // Check if expiration is still valid
+  } catch (error) {
+    return false; // Prevent crashes if token is invalid
+  }
+};
+
+
+const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
+  return isAuthenticated() ? element : <Navigate to="/login" />; //Reroute ProtectedRoutes to /login if not authenticated
+};
 
 function App() {
-  const cardsData = [
-    {
-      image: houseImage,
-      title: "Apartment 1",
-      description: "Random Adress 1",
-      link: "/about",
-      street: "Street 1",
-      city: "City A",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 2",
-      description: "Random Adress 1",
-      link: "/about",
-      street: "Street 2",
-      city: "City A",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 3",
-      description: "Random Adress 1",
-      link: "/about",
-      street: "Street 3",
-      city: "City A",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 4",
-      description: "Random Adress 2",
-      link: "/about",
-      street: "Street 1",
-      city: "City B",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 5",
-      description: "Random Adress 3",
-      link: "/about",
-      street: "Street 2",
-      city: "City B",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 6",
-      description: "Random Adress 1",
-      link: "/about",
-      street: "Street 3",
-      city: "City B",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 7",
-      description: "Random Adress 2",
-      link: "/about",
-      street: "Street 1",
-      city: "City C",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 8",
-      description: "Random Adress 3",
-      link: "/about",
-      street: "Street 2",
-      city: "City C",
-    },
-    {
-      image: houseImage,
-      title: "Apartment 9",
-      description: "Random Adress 1",
-      link: "/about",
-      street: "Street 3",
-      city: "City C",
-    },
-  ];
+
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/apartments")  // Backend API URL
+      .then(response => setApartments(response.data))  // Store data in state
+      .catch(error => console.error("Error fetching apartments:", error));
+  }, []);
 
   const [streetFilters, setStreetFilters] = useState<
     Record<StreetFilter, boolean>
@@ -133,6 +112,7 @@ function App() {
     "City A": false,
     "City B": false,
     "City C": false,
+    "City D": false,
   });
 
   const handleStreetFilterChange = (filter: StreetFilter) => {
@@ -143,17 +123,26 @@ function App() {
   };
 
   const handleCityFilterChange = (filter: CityFilter) => {
-    setCityFilters((prevFilters) => ({
-      ...prevFilters,
+    setCityFilters((prevFilters) => ({ 
+      ...prevFilters, 
       [filter]: !prevFilters[filter],
     }));
   };
+  
+  //HANDLE CRUD METHODS
+  const handleApartmentAdded = (newApartment: Apartment) => {
+    setApartments([...apartments, newApartment]); // Dynamically update list
+  };
 
-  const filteredCards = cardsData.filter(
-    (card) =>
-      (streetFilters[card.street as StreetFilter] ||
+  const handleApartmentDeleted = (id: number) => {
+    setApartments(apartments.filter((apt) => apt.id !== id)); // Remove from UI after deletion
+  };
+
+  const filteredCards = apartments.filter(
+    (apartment) =>
+      (streetFilters[apartment.street as StreetFilter] ||
         !Object.values(streetFilters).some(Boolean)) &&
-      (cityFilters[card.city as CityFilter] ||
+      (cityFilters[apartment.city as CityFilter] ||
         !Object.values(cityFilters).some(Boolean))
   );
 
@@ -169,21 +158,77 @@ function App() {
                 path="*"
                 element={
                   <div>
-                    <div>
-                      Welcome, you can find our available apartments in the
-                      "Apartment" tab at the top. Here are the cities we provide
-                      apartments in.
-                    </div>
+                    <p>
+                      Welcome! You can find available apartments in the
+                      **"Apartments"** tab at the top.
+                      <br />
+                      <br />
+                      Here is a list of the cities we provide
+                      apartments in:
+                    </p>
                     <ListGroup
-                      items={["City A", "City B", "City C", "City D", "City E"]}
+                      items={[...new Set(apartments.map((apt) => apt.city))]} // Extract unique cities
+                      //items={["City A", "City B", "City C", "City D"]} // Hardcoded list
                       heading="Cities"
                       onSelectItem={handleSelectCity}
                     />
                   </div>
                 }
               />
-              <Route path="/about" element={<div>About Page</div>} />
-              <Route path="/apartments2" element={<div>Apartments Page</div>} />
+
+              <Route path="/about" element={
+                <div>
+                  <div className="container mt-5">
+                    <div className="card shadow-sm border-0">
+                      <div className="card-body">
+                        <h2 className="text-primary text-center border-bottom pb-2">About This Project</h2>
+                        <p className="text-muted text-center">
+                          Built by <strong>Andre Persson</strong> as a learning project to explore web development technologies and best practices.
+                        </p>
+                        <p>
+                          This site provides a structured layout for showcasing available apartments, incorporating modern UI/UX principles with future potential for interactive features.
+                          <br/>
+                          <br/>
+                          The focus of this project has been to establish the backend coupled with responsive design. Integrate a database, authentication and filtering apartments. Hence the lack of frontend design.
+                        </p>
+
+                        <h3 className="text-primary mt-4">Technologies & Libraries Used</h3>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <h5 className="text-dark">Frontend</h5>
+                            <ul className="list-unstyled">
+                              <li><strong>React.js</strong> – Component-based UI development and state management.</li>
+                              <li><strong>Bootstrap</strong> – Responsive design and predefined styling.</li>
+                              <li><strong>CSS & Styled Components</strong> – Enhances customizability.</li>
+                            </ul>
+                          </div>
+                          <div className="col-md-6">
+                            <h5 className="text-dark">Backend (Potential Future Expansion)</h5>
+                            <ul className="list-unstyled">
+                              <li><strong>Node.js & Express.js</strong> – API-based interactions for listings.</li>
+                              <li><strong>PostgreSQL</strong> – Storing rental listings and user data.</li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <h3 className="text-primary mt-4">Other Tools & Enhancements</h3>
+                        <ul className="list-unstyled">
+                          <li><strong>JWT Authentication</strong> – Secure login sessions using tokens and bcrypt for hashing password. (1 Minute tokens for showcase purposes)</li>
+                          <li><strong>Cloud Hosting - Vercel</strong> – Deployment and scalability.</li>
+                          <li><strong>RESTful APIs</strong> – Possible real estate database integration.</li>
+                        </ul>
+
+                        <h4 className="text-center mt-4 text-secondary">Future Potential</h4>
+                        <p className="text-center">
+                          While the side panel, footer and Search serve as visual prototypes, they set the groundwork for an evolving rental platform with enhancements like tenant applications, booking management, and real-time availability updates.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              } 
+              />
+              
               <Route
                 path="/apartments"
                 element={
@@ -195,22 +240,52 @@ function App() {
                       onCityFilterChange={handleCityFilterChange}
                     />
 
-                    <div className="d-flex flex-wrap">
-                      {filteredCards.map((card, index) => (
+                  <div className="d-flex flex-wrap">
+                    {apartments.length === 0 ? (
+                      <p>Loading apartments...</p>  // Shows when backend is still loading
+                    ) : filteredCards.length === 0 ? (
+                      <p>No apartments found with the selected filters.</p>  // Shows when filtering results in zero matches
+                    ) : (
+                      filteredCards.map((apt) => (
                         <Card
-                          key={index}
-                          image={card.image}
-                          title={card.title}
-                          description={card.description}
-                          link={card.link}
-                          street={card.street}
-                          city={card.city}
+                          key={apt.id} // Must have - Used for API delete
+                          image={houseImage} // Placeholder image
+                          title={`Apartment ${apt.apartment_number}`}
+                          description={apt.address}
+                          link="/about"
+                          street={apt.street}
+                          city={apt.city}
+                          size={apt.size_sq_m}
+                          rent={apt.rent_cost}
                         />
-                      ))}
+                      ))
+                    )}
                     </div>
                   </div>
                 }
               />
+              
+              <Route path="/admin" element=
+              {
+                <ProtectedRoute element={
+                  <div>Admin Page
+                  <NewApartmentForm onApartmentAdded={handleApartmentAdded} />
+
+                  {/* List of Apartments with Delete Option */}
+                  {
+                    apartments.map((apt) => (
+                      <div key={apt.id} className="apartment-card">
+                        <DeleteApartment apartmentId={apt.id} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
+                      </div>
+                    ))
+                  }
+
+                  </div>
+                }
+                />
+              }
+              />
+              <Route path="/login" element={<Login />} />
             </Routes>
           </Content>
         </div>

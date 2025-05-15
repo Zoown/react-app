@@ -13,9 +13,9 @@ import "../myCustomStyles.css";
 
 interface FilterBarProps {
   streetFilters: Record<"Street 1" | "Street 2" | "Street 3", boolean>;
-  cityFilters: Record<"City A" | "City B" | "City C", boolean>;
+  cityFilters: Record<"City A" | "City B" | "City C" | "City D", boolean>;
   onStreetFilterChange: (filter: "Street 1" | "Street 2" | "Street 3") => void;
-  onCityFilterChange: (filter: "City A" | "City B" | "City C") => void;
+  onCityFilterChange: (filter: "City A" | "City B" | "City C" | "City D") => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -102,6 +102,18 @@ const FilterBar: React.FC<FilterBarProps> = ({
           />
           <label className="form-check-label ms-2" htmlFor="cityC">
             City C
+          </label>
+        </div>
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="cityD"
+            checked={cityFilters["City D"]}
+            onChange={() => onCityFilterChange("City D")}
+          />
+          <label className="form-check-label ms-2" htmlFor="cityD">
+            City D
           </label>
         </div>
       </div>

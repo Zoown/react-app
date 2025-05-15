@@ -10,6 +10,8 @@ interface CardProps {
   link: string;
   street: string;
   city: string;
+  size: number;
+  rent: number;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -19,6 +21,8 @@ const Card: React.FC<CardProps> = ({
   link,
   street,
   city,
+  size,
+  rent,
 }) => {
   return (
     <Link to={link} className="card-link">
@@ -29,6 +33,8 @@ const Card: React.FC<CardProps> = ({
           <p className="card-text">{description}</p>
           <p className="card-text">{"Street: " + street}</p>
           <p className="card-text">{"City: " + city}</p>
+          <p className="card-text">{"Size: " + size + "sqm"}</p>
+          <p className="card-text">{"Rent: " + rent}</p>
         </div>
       </div>
     </Link>
