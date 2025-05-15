@@ -25,11 +25,15 @@ const pool = new pg.Pool({
 });
 
 export default async function handler(req, res) {
+  console.log("API Request received for /apartments"); // Debugging log
+  console.log("DB_HOST:", process.env.DB_HOST); // Check if env variables are loaded
+
   if (req.method === "GET") {
     try {
       const result = await pool.query("SELECT * FROM apartments");
       res.json(result.rows);
     } catch (err) {
+      console.error("Database query error:", err);
       res.status(500).json({ error: err.message });
     }
   } else {
