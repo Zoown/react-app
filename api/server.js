@@ -96,7 +96,7 @@ app.post("/login", (req, res) => {
       return res.status(500).json({ error: "Server error" });
     }
 
-    if (results.length === 0) {
+    if (results.rows.length === 0) {
       console.error("No user found with username:", username);
       return res.status(401).json({ error: "User not found" });
     }
