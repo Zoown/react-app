@@ -1,19 +1,67 @@
 const supabaseUrl = "https://djnxumgjhrycxjxqtdju.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqbnh1bWdqaHJ5Y3hqeHF0ZGp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzMwNDMyMCwiZXhwIjoyMDYyODgwMzIwfQ.Vk52rtg-8HxYI1Me2FS2W2XI274pLrAoymxBoX9l3bc";
 
-export default async function handler(req, res) {
-  const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
-    headers: {
-      apiKey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
+//const supabaseUrl = "https://YOUR-SUPABASE-PROJECT.supabase.co";
+//const supabaseKey = process.env.SUPABASE_KEY;
 
-  if (!response.ok) {
-    console.error("Supabase API error:", response.statusText);
-    return res.status(response.status).json({ error: response.statusText });
+export default async function handler(req, res) {
+  const { id } = req.query; // For DELETE requests
+
+  if (req.method === "GET") {
+    const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: response.statusText });
+    }
+
+    const data = await response.json();
+    return res.status(200).json(data);
   }
 
-  const data = await response.json();
-  res.status(200).json(data);
+  if (req.method === "POST") {
+    const { street, address, apartment_number, size_sq_m, rent_cost, city } = req.body;
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city }),
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: response.statusText });
+    }
+
+    const data = await response.json();
+    return res.status(201).json(data);
+  }
+
+  if (req.method === "DELETE") {
+    if (!id) return res.status(400).json({ error: "Apartment ID is required" });
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/apartments?id=eq.${id}`, {
+      method: "DELETE",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: response.statusText });
+    }
+
+    return res.status(200).json({ message: "Apartment deleted" });
+  }
+
+  return res.status(405).json({ error: "Method Not Allowed" });
 }
+
