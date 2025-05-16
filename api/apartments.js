@@ -1,8 +1,4 @@
 const supabaseUrl = "https://djnxumgjhrycxjxqtdju.supabase.co";
-//const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqbnh1bWdqaHJ5Y3hqeHF0ZGp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzMwNDMyMCwiZXhwIjoyMDYyODgwMzIwfQ.Vk52rtg-8HxYI1Me2FS2W2XI274pLrAoymxBoX9l3bc";
-
-//const supabaseUrl = "https://YOUR-SUPABASE-PROJECT.supabase.co";
-//const supabaseKey = process.env.SUPABASE_KEY;
 
 export default async function handler(req, res) {
   const { id } = req.query; // For DELETE requests
@@ -23,27 +19,6 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   }
 
-  //if (req.method === "POST") {
-  //  const { street, address, apartment_number, size_sq_m, rent_cost, city } = req.body;
-//
-  //  const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
-  //    method: "POST",
-  //    headers: {
-  //      apikey: process.env.SUPABASE_KEY,
-  //      Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
-  //      "Content-Type": "application/json",
-  //    },
-  //    body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city }),
-  //  });
-  //  
-  //  if (!response.ok) {
-  //    return res.status(response.status).json({ error: response.statusText });
-  //  }
-//
-  //  const data = await response.json();
-  //  return res.status(201).json(data);
-  //}
-
   if (req.method === "POST") {
   try {
     console.log("Raw request body:", req.body); // Debugging
@@ -55,16 +30,6 @@ export default async function handler(req, res) {
     if (!street || !address || !apartment_number || !size_sq_m || !rent_cost || !city) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
-    //const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
-    //  method: "POST",
-    //  headers: {
-    //    apikey: process.env.SUPABASE_KEY,
-    //    Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
-    //    "Content-Type": "application/json",
-    //  },
-    //  body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city, created_at: new Date().toISOString() }),
-    //});
 
     const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
       method: "POST",
@@ -94,14 +59,6 @@ export default async function handler(req, res) {
 
   if (req.method === "DELETE") {
     if (!id) return res.status(400).json({ error: "Apartment ID is required" });
-
-    //const response = await fetch(`${supabaseUrl}/rest/v1/apartments?id=eq.${id}`, {
-    //  method: "DELETE",
-    //  headers: {
-    //    apikey: process.env.SUPABASE_KEY,
-    //    Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
-    //  },
-    //});
 
     const response = await fetch(`${supabaseUrl}/rest/v1/apartments?id=eq.${id}`, {
       method: "DELETE",
