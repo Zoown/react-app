@@ -28,7 +28,15 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
   //  setFormData({ ...formData, [e.target.name]: e.target.value });
   //};
 
+  //const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //  setFormData({ ...formData, [e.target.name]: e.target.value });
+  //};
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.type === "number" ? Number(e.target.value) : e.target.value, // Convert numbers
+    });
     setFormData({
       ...formData,
       [e.target.name]: e.target.type === "number" ? Number(e.target.value) : e.target.value, // Convert numbers

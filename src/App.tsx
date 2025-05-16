@@ -60,6 +60,7 @@ type CityFilter = "City A" | "City B" | "City C" | "City D";
 
 interface Apartment {
   id?: number;
+  id?: number;
   street: string;
   address: string;
   apartment_number: number;
@@ -287,6 +288,7 @@ function App() {
                     apartments.map((apt) => (
                       <div key={apt.id} className="apartment-card">
                         <DeleteApartment apartmentId={apt.id ?? 0} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
+                        <DeleteApartment apartmentId={apt.id ?? 0} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
                       </div>
                     ))
                   }
@@ -307,6 +309,10 @@ function App() {
 }
 
 export default App;
+function setLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+
 function setLoading(arg0: boolean) {
   throw new Error("Function not implemented.");
 }
