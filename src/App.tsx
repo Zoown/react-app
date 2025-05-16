@@ -59,7 +59,7 @@ type StreetFilter = "Street 1" | "Street 2" | "Street 3";
 type CityFilter = "City A" | "City B" | "City C" | "City D";
 
 interface Apartment {
-  id: number;
+  id?: number;
   street: string;
   address: string;
   apartment_number: number;
@@ -286,7 +286,7 @@ function App() {
                   {
                     apartments.map((apt) => (
                       <div key={apt.id} className="apartment-card">
-                        <DeleteApartment apartmentId={apt.id} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
+                        <DeleteApartment apartmentId={apt.id ?? 0} apartmentNumber={apt.apartment_number} onApartmentDeleted={handleApartmentDeleted} />
                       </div>
                     ))
                   }
