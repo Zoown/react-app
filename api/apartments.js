@@ -46,15 +46,25 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
   try {
-    console.log("Raw request body:", req.body); // 🔍 Debugging
+    console.log("Raw request body:", req.body); // Debugging
 
     const { street, address, apartment_number, size_sq_m, rent_cost, city } = req.body;
 
-    console.log("Extracted street:", street); // 🔍 Debugging
+    console.log("Extracted street:", street); // Debugging
 
     if (!street || !address || !apartment_number || !size_sq_m || !rent_cost || !city) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    //const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
+    //  method: "POST",
+    //  headers: {
+    //    apikey: process.env.SUPABASE_KEY,
+    //    Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
+    //    "Content-Type": "application/json",
+    //  },
+    //  body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city, created_at: new Date().toISOString() }),
+    //});
 
     const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
       method: "POST",
@@ -62,12 +72,13 @@ export default async function handler(req, res) {
         apikey: process.env.SUPABASE_KEY,
         Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
         "Content-Type": "application/json",
+        "Prefer": "return=representation" // Ensures full row is returned (like RETURNING *)
       },
       body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city, created_at: new Date().toISOString() }),
     });
 
     const responseData = await response.json();
-    console.error("Supabase Insert Error Details:", responseData); // 🔍 Debugging
+    console.error("Supabase Insert Error Details:", responseData); // Debugging
 
     if (!response.ok) {
       return res.status(response.status).json({ error: responseData.message || response.statusText });
