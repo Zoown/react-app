@@ -23,25 +23,52 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   }
 
+  //if (req.method === "POST") {
+  //  const { street, address, apartment_number, size_sq_m, rent_cost, city } = req.body;
+//
+  //  const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
+  //    method: "POST",
+  //    headers: {
+  //      apikey: process.env.SUPABASE_KEY,
+  //      Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
+  //      "Content-Type": "application/json",
+  //    },
+  //    body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city }),
+  //  });
+  //  
+  //  if (!response.ok) {
+  //    return res.status(response.status).json({ error: response.statusText });
+  //  }
+//
+  //  const data = await response.json();
+  //  return res.status(201).json(data);
+  //}
+
   if (req.method === "POST") {
-    const { street, address, apartment_number, size_sq_m, rent_cost, city } = req.body;
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
+        method: "POST",
+        headers: {
+          apikey: process.env.SUPABASE_KEY,
+          Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city, created_at: new Date().toISOString() }),
+      });
 
-    const response = await fetch(`${supabaseUrl}/rest/v1/apartments`, {
-      method: "POST",
-      headers: {
-        apikey: process.env.SUPABASE_KEY,
-        Authorization: `Bearer ${process.env.SUPABASE_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ street, address, apartment_number, size_sq_m, rent_cost, city }),
-    });
+      // Log Supabase's full response to see exactly what's wrong
+      const responseData = await response.json();
+      console.error("Supabase Insert Error Details:", responseData); // Debugging
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: response.statusText });
+      if (!response.ok) {
+        return res.status(response.status).json({ error: responseData.message || response.statusText });
+      }
+
+      return res.status(201).json(responseData);
+    } catch (error) {
+      console.error("Error adding apartment:", error);
+      return res.status(500).json({ error: error.message });
     }
-
-    const data = await response.json();
-    return res.status(201).json(data);
   }
 
   if (req.method === "DELETE") {
