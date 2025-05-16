@@ -18,7 +18,6 @@ const DeleteApartment: React.FC<DeleteApartmentProps> = ({ apartmentId, apartmen
     }
   };
 
-  //return <button onClick={handleApartmentDelete}>Delete</button>;
   return (
     <div className="card shadow-sm mb-3">
       <div className="card-body d-flex justify-content-between align-items-center">
