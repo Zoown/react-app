@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 interface ApartmentFormData {
-  id: number;
   street: string;
   address: string;
   apartment_number: number;
@@ -17,7 +16,6 @@ interface NewApartmentFormProps {
 
 const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded }) => {
   const [formData, setFormData] = useState<ApartmentFormData>({
-    id: 0,
     street: "",
     address: "",
     apartment_number: 0,
@@ -43,7 +41,6 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
 
       // Reset the form
       setFormData({
-        id: 0,
         street: "",
         address: "",
         apartment_number: 0,
