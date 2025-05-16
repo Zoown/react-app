@@ -35,7 +35,7 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
     console.log("Submitting form data:", formData); // Debugging
 
     try {
-      const response = await axios.post("http://localhost:5000/apartments", formData, {
+      const response = await axios.post("/api/apartments", formData, {
         headers: { "Content-Type": "application/json" } // Explicitly set headers
       });
 
