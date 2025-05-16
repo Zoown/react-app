@@ -40,19 +40,20 @@ const NewApartmentForm: React.FC<NewApartmentFormProps> = ({ onApartmentAdded })
     console.log("Submitting form data:", formData); // Debugging
 
     try {
-      //const response = await axios.post("/api/apartments", formData, {
-      //  headers: { "Content-Type": "application/json" } // Explicitly set headers
-      //});
-      const response = await axios.post("/api/apartments", {
-        street: formData.street,
-        address: formData.address,
-        apartment_number: formData.apartment_number,
-        size_sq_m: formData.size_sq_m,
-        rent_cost: formData.rent_cost,
-        city: formData.city,
-      }, {
+      const response = await axios.post("/api/apartments", formData, {
         headers: { "Content-Type": "application/json" } // Explicitly set headers
       });
+      
+      //const response = await axios.post("/api/apartments", {
+      //  street: formData.street,
+      //  address: formData.address,
+      //  apartment_number: formData.apartment_number,
+      //  size_sq_m: formData.size_sq_m,
+      //  rent_cost: formData.rent_cost,
+      //  city: formData.city,
+      //}, {
+      //  headers: { "Content-Type": "application/json" } // Explicitly set headers
+      //});
 
       onApartmentAdded(response.data); // Update the frontend dynamically
 
